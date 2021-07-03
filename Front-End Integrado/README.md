@@ -51,7 +51,3 @@ Cada vez que guardes un archivo, se volverán a transpilar los archivos. Sin emb
 
 Ejecutar el comando `npm run build` generará un artefacto optimizado para producción. Lo cargas siguiendo los pasos de la sección [Como instalar la extensión](#./como-instalar-la-extensión).
 
-## Como contribuir
-
-Ver [CONTRIBUTING.md](./CONTRIBUTING.md)
-

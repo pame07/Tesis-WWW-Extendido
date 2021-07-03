@@ -36,18 +36,3 @@ TWITTER_CONSUMER_SECRET: '' # Consumer secret provista por twitter al aplicar a 
 3. Ejecuta `npm start` para correr el servidor de desarrollo. El mismo se encarga recargar las páginas en el navegador cuando guardas alguna modificación a los archvos del repositorio.
 4. Visita http://localhost:3000/health
 5. Verificar que retorne código 200 y un JSON { "status": "UP" }
-
-## Como contribuir
-
-1. Clona el repositorio y haz `checkout` a la rama `develop`
-2. Crea una rama para que desarrolles lo tuyo. Dicha rama debe seguir las [convenciones de rama](#convenciones-de-rama).
-3. Cuando creas que tu código está listo, haz un pull request para integrar tu rama a `develop`. Pones de reviewer a todos los otros integrantes del equipo.
-
-### Convenciones de rama
-
-* `feature/*` para ramas que contienen cosas nuevas. Ejemplo: `feature/anade-soporte-a-facebook`.
-* `bugfix/*` para ramas que contienen fixes a cosas ya existentes. Ejemplo: `bugfix/arregla-calculo-de-pesos`.
-
-## En caso de dudas
-
-Contactar al administrador del repo: @german1608

@@ -1,9 +1,5 @@
 # world-white-web
 
-[![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)
-
-[![Build Status](https://travis-ci.com/german1608/world-white-web.svg?token=aqTuGezTjtpGskdvd7vs&branch=master)](https://travis-ci.com/german1608/world-white-web)
-
 MiniProyecto de Desarrollo de Software para la USBve.
 
 
@@ -59,7 +55,3 @@ Ejecutar el comando `npm run build` generará un artefacto optimizado para produ
 
 Ver [CONTRIBUTING.md](./CONTRIBUTING.md)
 
-
-## En caso de dudas
-
-Contactar al administrador del repo: @german1608

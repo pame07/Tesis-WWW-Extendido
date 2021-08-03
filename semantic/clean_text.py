@@ -1,4 +1,5 @@
 import re
+import string
 
 def clean_text(tweet):
     newText = deEmojify(removeURL(removeMention(removeHashtag(tweet))))

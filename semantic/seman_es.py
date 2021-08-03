@@ -3,6 +3,8 @@ import spacy
 from nltk.corpus import wordnet as wn
 import nltk
 import re
+import gc
+import sys
 
 nlp = spacy.load('es_core_news_lg', disable=["ner"]) 
 
@@ -37,8 +39,12 @@ def get_score_ES(text):
     scr = 0
     for item in final:
         scr += item
+    del doc, unit, candidate, syns
+    gc.collect()
     if (len(final) == 0):
         return 0.30
     else:
         return scr/len(final)
 
+""" result = get_score_ES(sys.argv[1])
+print(result) """

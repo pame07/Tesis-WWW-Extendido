@@ -1,8 +1,14 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
 import spacy_dbpedia_spotlight
+import gc
+import sys
+import spacy
+import json
+from ftfy import fix_text
 
 def spot_dbpedia_esp(text):
-    slp = spacy_dbpedia_spotlight.load('es')
+    slp= spacy.load("es_core_news_lg")
+    slp.add_pipe('dbpedia_spotlight')
     doc = slp(text)
 
     spot = []
@@ -29,18 +35,29 @@ def extract_esp(query):
     # Convert results to JSON format
     sparql.setReturnFormat(JSON)
     result = sparql.query().convert()
+    
 
+    #print(result["label"]["value"])
     # The return data contains "bindings" (a list of dictionaries)
     for hit in result["results"]["bindings"]:
         # We want the "value" attribute of the "comment" field
+        #return(hit["comment"]["value"])
         return(hit["comment"]["value"])
 
 def get_entities_esp(text):
     uris = spot_dbpedia_esp(text)
     info = []
     for item in uris:
-        info.append(extract_esp(item))
+        info.append((extract_esp(item)).encode('unicode_escape').decode('unicode_escape'))
     return info
 
 
+#print(spot_dbpedia_esp("Chile tiene la Cordillera de los Andes"))
 
+#print(sys.argv[1])
+#ents = get_entities_esp(sys.argv[1])
+#print(ents)
+
+""" ents = '|'.join(get_entities_esp(sys.argv[1]))
+clean = ents.encode('utf-8').decode('ascii', 'ignore')
+print(clean) """

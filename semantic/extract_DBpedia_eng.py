@@ -1,8 +1,12 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
 import spacy_dbpedia_spotlight
+import spacy
+import gc
+import sys
 
 def spot_dbpedia_eng(text):
-    nlp = spacy_dbpedia_spotlight.load('en')
+    nlp = spacy.load("en_core_web_lg")
+    nlp.add_pipe('dbpedia_spotlight')
     doc = nlp(text)
    
     spot = []
@@ -34,11 +38,20 @@ def extract_eng(query):
     for hit in result["results"]["bindings"]:
         # We want the "value" attribute of the "comment" field
         return(hit["comment"]["value"])
+    
 
 
 def get_entities_eng(text):
     uris = spot_dbpedia_eng(text)
     info = []
     for item in uris:
-        info.append(extract_eng(item))
+        info.append(extract_eng(item).encode('unicode_escape').decode('unicode_escape'))
     return info
+    del uris, info
+    gc.collect()
+
+
+""" ents = '|'.join(get_entities_eng(sys.argv[1]))
+clean = ents.encode('utf-8').decode('ascii', 'ignore')
+print(clean) """
+

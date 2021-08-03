@@ -1,6 +1,7 @@
 import ast
 import re
 from functools import partial
+import gc
 
 
 file1 = open("C:/Users/Pamela/Desktop/Seminario/Procesamiento_datasets/semantic/dic_es.txt", "r", encoding='utf-8-sig')
@@ -23,8 +24,12 @@ def agregar_texto(text):
     word_re = re.compile(r'\b[a-zA-Z]+\b')
     new = word_re.sub(partial(helper, dict_en), text)
     return new
+    del new
+    gc.collect()
 
 def add_text(text):
     word_re = re.compile(r'\b[a-zA-Z]+\b')
     new = word_re.sub(partial(helper, dict_en), text)
     return new
+    del new
+    gc.collect()

@@ -6,6 +6,8 @@ import sys
 import pandas as pd
 from features import fix, deEmojify, lang_detection, embedding_ENG, embedding_ESP, URL_ratio, hashtag_ratio, mention_ratio, entropy_score, DWT  
 
+""" import os, psutil
+process = psutil.Process(os.getpid()) """
 
 def detect_hashtag(text):
     hashtag = re.findall(r'#[a-zA-Z_:,!?¿¡%&$0-9]*', text)
@@ -127,14 +129,12 @@ auth.set_access_token(access_token, access_token_secret)
 
 api = tweepy.API(auth) 
 
-user = api.get_user("@danielbono")
-#user = api.get_user(sys.argv[1]) 
+user = api.get_user(sys.argv[1]) 
 if not user:
     print("user not found")
 
 tweet_id = []
-#status = api.user_timeline(screen_name=sys.argv[1], count=5, include_rts = False, tweet_mode= "extended")
-status = api.user_timeline(screen_name="@danielbono", count=5, include_rts = False, tweet_mode= "extended")
+status = api.user_timeline(screen_name=sys.argv[1], count=5, include_rts = False, tweet_mode= "extended")
 
 for text in status:
     tweet_id.append(text._json['id'])
@@ -145,7 +145,7 @@ for id_text in tweet_id:
     url = detect_url(temp.full_text)
     mention = detect_mention(temp.full_text)
     total = tags + url + mention
-    if len(temp.full_text.split()) - total >= 3:
+    if len(temp.full_text.split()) > total:
         tweet_info = temp
         break
     
@@ -159,3 +159,5 @@ data = get_features(user, tweet_info, tweet_lang)
 result = prediction(data, tweet_lang)
 
 print(str(result[0])) 
+
+""" print("Memoria: ", process.memory_info().rss)  # in bytes  """

@@ -27,6 +27,7 @@ calculatorRoutes.get('/twitter/user/:id', validate('twitterUserCredibility'), as
   if (!errors.isEmpty()) {
     errorMapper(errors.array())
   }
+  console.log(res)
   res.json(await twitterUserCredibility(req.params.id))
 }))
 
@@ -94,7 +95,8 @@ calculatorRoutes.get('/tweets/scraped', validate('scrapedTweetCredibility'), asy
     verified: req.query.verified === 'true',
     yearJoined: +req.query.yearJoined,
     followersCount: +req.query.followersCount,
-    friendsCount: +req.query.friendsCount
+    friendsCount: +req.query.friendsCount,
+    username: ''
   }, +req.query.maxFollowers))
 }))
 

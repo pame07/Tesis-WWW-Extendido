@@ -2,21 +2,14 @@
 /* eslint-disable no-empty */
 //Por fin salió !!!!
 
-/* function predictUser(user: String):Promise<String>{
-  return new Promise((resolve, reject) => {
-    const path = require('path')
-    const scriptFilename = path.join(__dirname, 'predictUser', 'bot_detection_module.py')
-    const { exec } = require('child_process')
-    exec(scriptFilename + ' ' + user, (err: any, stdout: any, stderr: any) => {
-      if (err) {
-        // node couldn't execute the command
-        reject(stderr)
-      }
-      // the *entire* stdout Sand stderr (buffered)
-      resolve(String(stdout.trim()))
-    })
-  })
-} */
+const road = require('path')
+const proc = require('child_process')
+const namefile = road.join(__dirname, 'predictUser', 'bot_detection_module.py')
+function predictUser(user: String) : String{
+  var test = proc.spawnSync('python', [namefile, user])
+
+  return test.stdout.toString().trim()
+}
 
 const path = require('path')
 const scriptFilename = path.join(__dirname, 'semantic', 'analisis_seman.py')

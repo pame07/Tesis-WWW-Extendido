@@ -10,7 +10,7 @@ import SimpleSpamFilter, { SimpleSpamFilterParams } from './spam-filter'
 import fs from 'fs'
 import path from 'path'
 import emojiStrip from 'emoji-strip'
-import { semanticScore } from './python_script'
+import { semanticScore, predictUser } from './python_script'
 
 const enDictionaryBase = require.resolve('dictionary-en-us')
 const frDictionaryBase = require.resolve('dictionary-fr')
@@ -44,7 +44,8 @@ function responseToTwitterUser(response: any) : TwitterUser {
     verified: response.verified,
     yearJoined: response.created_at.split(' ').pop(),
     followersCount: response.followers_count,
-    friendsCount: response.friends_count
+    friendsCount: response.friends_count,
+    username: response.screen_name
   }
 }
 
@@ -141,7 +142,7 @@ async function calculateTextCredibility(text: Text, params: TextCredibilityWeigh
   const badWordsCalculation = params.weightBadWords * badWordsCriteria(text.text)
   const spamCalculation = params.weightSpam * spamCriteria(text)
   const missSpellingCalculation = params.weightMisspelling * (await missSpellingCriteria(text))
-  const semanticCalculation = params.weightSemantic * (await semanticScore(String(text)))
+  const semanticCalculation = params.weightSemantic * (await semanticScore(text.text))
   return {
     credibility: badWordsCalculation + spamCalculation + missSpellingCalculation + semanticCalculation
   }
@@ -170,7 +171,18 @@ async function getTweetInfo(tweetId: string) : Promise<Tweet> {
 }
 
 function calculateUserCredibility(user: TwitterUser) : number {
-  return getVerifWeight(user.verified) + getCreationWeight(user.yearJoined)
+  return getVerifWeight(user.verified) + getCreationWeight(user.yearJoined) + weightChooser(user.username)
+}
+
+function weightChooser(user: String):number{
+  var predict = predictUser(user)
+  if (predict == 'human'){
+    return 33.33
+  } else if (predict == 'bot'){
+    return 0
+  } else {
+    return 16.66
+  }
 }
 
 function calculateSocialCredibility(user: TwitterUser, maxFollowers: number) : number {
@@ -195,6 +207,7 @@ function scrapperTwitterUserCredibility(verified: boolean, accountCreationYear: 
     yearJoined: accountCreationYear,
     followersCount: 0,
     friendsCount: 0,
+    username: ''
   }
   return {
     credibility: calculateUserCredibility(user)
@@ -220,7 +233,7 @@ async function calculateTweetCredibility(tweetId: string,
 
 function getVerifWeight(isUserVerified : boolean) : number {
   if (isUserVerified) {
-    return 50
+    return 33.33
   } else {
     return 0
   }
@@ -231,7 +244,7 @@ function getCreationWeight(yearJoined : number) : number {
   const twitterCreationYear = 2006
   const maxAccountAge = currentYear - twitterCreationYear
   const accountAge = currentYear - yearJoined
-  return 50 * (accountAge / maxAccountAge)
+  return 33.34 * (accountAge / maxAccountAge)
 }
 
 function followersImpact(userFollowers: number, maxFollowers: number) : number {
@@ -272,7 +285,8 @@ function scrapedSocialCredibility(followersCount: number, friendsCount: number, 
     verified: false,
     yearJoined: 2018,
     followersCount: followersCount,
-    friendsCount: friendsCount
+    friendsCount: friendsCount,
+    username: ''
   }
   return {
     credibility: calculateSocialCredibility(user, maxFollowers)

@@ -21,6 +21,7 @@ export interface TwitterUser {
   yearJoined: number
   followersCount: number
   friendsCount: number
+  username: string
 }
 
 export interface Tweet {

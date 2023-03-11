@@ -1,34 +1,11 @@
 import re
+import string
 
 def clean_text(tweet):
     newText = deEmojify(removeURL(removeMention(removeHashtag(tweet))))
     aux = newText.split()
     string = ' '.join(aux)
     return string
-
-""" def int_removeHashtag(text):
-    aux = text.split()
-    index = []
-    word = []
-
-
-    prev_word = ""
-
-    for i in range(len(aux)):
-        if aux[i].find("#") != -1:
-            word.append(aux[i])
-            index.append(i)
-
-    if aux[0].find("#") != -1:
-        item =  aux[0]
-        if aux[1].find("#") != -1:
-            item2 = aux[1]
-            aux.remove(item)
-            aux.remove(item2)
-        else:
-            test = aux[1].replace("#","")
-            print(test)
- """
 
 
 def removeHashtag(text):

@@ -3,6 +3,8 @@ import spacy
 from nltk.corpus import wordnet as wn
 import nltk
 import re
+import gc
+import sys
 
 nlp = spacy.load('es_core_news_lg', disable=["ner"]) 
 
@@ -14,6 +16,7 @@ def best_match_ES(doc,candidate):
     sc = 0
     for item in candidate:
         new = transl(item)
+        print(new)
         wd = nlp(new)
         if doc.similarity(wd) > sc:
             sc = doc.similarity(wd) 
@@ -22,6 +25,7 @@ def best_match_ES(doc,candidate):
 def get_score_ES(text):
     doc = nlp(text)
     doc = nlp(' '.join([str(t) for t in doc if not t.is_stop]))
+    #print(doc)
     doc = nlp(' '.join([str(t) for t in doc if t.pos_ in ['NOUN', 'PROPN', 'VERB']]))
     #doc = nlp(' '.join([token.lemma_ for token in doc]))
     string = re.sub(r"(\.)*(\,)*(\;)*",'',doc.text)
@@ -30,15 +34,21 @@ def get_score_ES(text):
     for item in unit:
         candidate = []
         syns = wn.synsets(item)
+        #print(syns)
         for i in range(len(syns)):
             candidate.append(syns[i].definition())
+            #print(candidate)
             score = best_match_ES(doc,candidate)
             final.append(score)
     scr = 0
     for item in final:
         scr += item
+    del doc, unit, candidate, syns
+    gc.collect()
     if (len(final) == 0):
         return 0.30
     else:
         return scr/len(final)
 
+""" result = get_score_ES(sys.argv[1])
+print(result) """

@@ -1,4 +1,6 @@
 import language_tool_python
+import sys
+import gc
 
 
 def ignore_rules_ENG(matches):
@@ -54,6 +56,7 @@ def ignore_rules_ESP(matches):
                 matches.clear()
     else:
         pass
+    
 
 def grammar_score(text,matches):
     size = len(text.split())
@@ -71,6 +74,7 @@ def check_eng(text):
     result = grammar_score(text,matches)
     #print(result)
     return result
+   
 
 def check_esp(text):
     tool = language_tool_python.LanguageTool('es')
@@ -82,7 +86,14 @@ def check_esp(text):
     result = grammar_score(text,matches)
     #print(result)
     return result
+   
 
 
-#print(check_eng("I kind of shudder when they refer to Robyn Lawley as a 'plus size' model. She looks totally AVERAGE size."))
-#print(check_esp("Vaso de leche!! Aterrizando pa' la Cama!!"))
+""" text = sys.argv[1]
+lang = TextBlob(text)
+if lang.detect_language() == 'en':
+    score = check_eng(text)
+    print(score)
+if lang.detect_language() == 'es':
+    score = check_esp(text)
+    print(score) """

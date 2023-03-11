@@ -106,6 +106,7 @@ function cleanText(text: string) : string {
 
 function badWordsCriteria(text: string) : number {
   const cleanedText = cleanText(text)
+  //console.log(cleanText(text))
   const wordsInText = getCleanedWords(cleanedText)
   const badWordsInText = getBadWords(wordsInText)
   return 100 - (100 * badWordsInText.length / wordsInText.length)
@@ -142,7 +143,9 @@ async function calculateTextCredibility(text: Text, params: TextCredibilityWeigh
   const badWordsCalculation = params.weightBadWords * badWordsCriteria(text.text)
   const spamCalculation = params.weightSpam * spamCriteria(text)
   const missSpellingCalculation = params.weightMisspelling * (await missSpellingCriteria(text))
-  const semanticCalculation = params.weightSemantic * (await semanticScore(text.text))
+  const semanticCalculation = params.weightSemantic * (await semanticScore(cleanText(text.text), text.lang))
+  //console.log('Texto entrada: ',cleanText(text.text))
+  console.log('Puntaje semantico: ', semanticCalculation)
   return {
     credibility: badWordsCalculation + spamCalculation + missSpellingCalculation + semanticCalculation
   }
@@ -170,20 +173,46 @@ async function getTweetInfo(tweetId: string) : Promise<Tweet> {
   }
 }
 
-function calculateUserCredibility(user: TwitterUser) : number {
-  return getVerifWeight(user.verified) + getCreationWeight(user.yearJoined) + weightChooser(user.username)
-}
+/* function calculateUserCredibility(user: TwitterUser) : number {
+  //console.log('Verified weight: '+ getVerifWeight(user.verified))
+  //console.log('Creation weight: '+ getCreationWeight(user.yearJoined))
+  //console.time('prediction')
+  //weightChooser(user.username)
+  //console.timeEnd('prediction')
+  return (getVerifWeight(user.verified) + getCreationWeight(user.yearJoined)) //* weightChooser(user.username)
+  
+} */
 
-function weightChooser(user: String):number{
-  var predict = predictUser(user)
-  if (predict == 'human'){
-    return 33.33
-  } else if (predict == 'bot'){
-    return 0
+function calculateUserCredibility(user: TwitterUser) : number {
+  const weightedScore = getVerifWeight(user.verified) + getCreationWeight(user.yearJoined)
+  //console.log('Cuenta: ', user.username)
+  //console.log('Predicción: ',predictUser(user.username))
+  if (predictUser(user.username) == 'bot') {
+    if (weightedScore > 50) {
+      return weightedScore * 0.85
+    } else if (weightedScore > 35) {
+      return weightedScore * 0.75
+    } else {
+      return weightedScore * 0
+    }
   } else {
-    return 16.66
+    return weightedScore
   }
 }
+
+/* function weightChooser(user: String):number{
+  var predict = predictUser(user)
+  console.log('Bot Detection value: ' + predict)
+  if (predict == 'human'){
+    return 1
+  } else if (predict == 'bot'){
+    //console.log('es bot')
+    return 0
+  } else {
+    return 0.5
+  }
+} */
+
 
 function calculateSocialCredibility(user: TwitterUser, maxFollowers: number) : number {
   const followersImpactCalc = followersImpact(user.followersCount, maxFollowers)
@@ -233,7 +262,7 @@ async function calculateTweetCredibility(tweetId: string,
 
 function getVerifWeight(isUserVerified : boolean) : number {
   if (isUserVerified) {
-    return 33.33
+    return 50
   } else {
     return 0
   }
@@ -244,7 +273,7 @@ function getCreationWeight(yearJoined : number) : number {
   const twitterCreationYear = 2006
   const maxAccountAge = currentYear - twitterCreationYear
   const accountAge = currentYear - yearJoined
-  return 33.34 * (accountAge / maxAccountAge)
+  return 50 * (accountAge / maxAccountAge)
 }
 
 function followersImpact(userFollowers: number, maxFollowers: number) : number {

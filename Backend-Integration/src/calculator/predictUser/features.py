@@ -1,5 +1,6 @@
+import string
 import pandas as pd
-from textblob import TextBlob
+import langid
 from ftfy import fix_text, fix_encoding
 import re
 import spacy
@@ -27,8 +28,10 @@ def preprocess(text):
         return text
 
 def lang_detection(text):
-    lang = TextBlob(text)
-    return lang.detect_language()
+    langid.set_languages(['en','es'])
+    result = langid.classify(text)
+    code = result[0];
+    return code
 
 def deEmojify(text):
     regrex_pattern = re.compile(pattern = "["
